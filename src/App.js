@@ -1,25 +1,10 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import MyComponent from "./MyComponent";
+import Counter from "./Counter";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
-}
+// App 이라는 컴포넌트 만들어 줌, function 키워드 사용 -> 함수형 컴포넌트
+const App = () => {
+  return <Counter />;
+};
 
 export default App;
