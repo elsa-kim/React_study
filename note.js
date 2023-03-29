@@ -35,4 +35,15 @@ state : 컴포넌트 내부에서 바뀔 수 있는 값
     2. 이벤트에 실행할 자바스크립트 코드를 전달하는 것이 아닌, 함수 형태의 값 전달 : HTML에서는 이벤트 설정 시 큰따옴표 안에 실행할 코드 넣었지만, 리액트에선 함수형태 객체 전달
     3. DOM 요소에만 이벤트 설정 가능 : div, button, input 등 DOM 요소에는 이벤트 설정할 수 있지만, 우리가 직접 만든 컴포넌트엔 이벤트 자체적으로 설정 불가(그냥 이름이 onClick인 props를 전달하는게 됨)
 
+ref : HTML에서 id를 사용해 DOM에 이름 다는 것처럼 리액트 내부에서 DOM에 이름 달 때 사용, DOM을 꼭 직접적으로 건드려야 할 때 사용
+  - 사용법
+    1. 콜백 함수를 통한 ref 설정 : ref 달고자 하는 요소에 ref라는 콜백함수를 props로 전달, 이 콜백함수는 ref 값을 파라미터로 전달받고 이를 컴포넌트의 멤버 변수로 설정
+      ex) <input ref={(ref) => {this.input=ref}} />  // this.input은 input 요소의 DOM 가리킴
+    2. createRed를 통한 ref 설정 : 리액트 내장함수 createRef 사용, 컴포넌트 내부에서 멤버 변수로 React.createRef() 담아줘야 함, 해당 멤버 변수를 ref를 달고자 하는 요소애 ref props로 넣어주면 설정 완료
+      ref 설정해 준 DOM에 접근하려면 this.input.current 조회
+  - 리액트에선 컴포넌트에도 ref 달 수 있음 : 주로 컴포넌트 내부에 있는 DOM을 컴포넌트 외부에서 사용할 때 씀
+    사용법 : <MyComponent ref={(ref) => {this.myComponent=ref}}
+
+
+
 */
