@@ -56,5 +56,74 @@ map() 함수 : 파라미터로 전달된 함수를 사용해 배열 내 각 요�
   - concat : push함수는 기존 배열 자체를 변경해주고 concat은 새로운 배열을 만들어줌
   - filter : 불변성 유지하며 배열 특정 항목 지울 때 사용
 
+라이프사이클(수명 주기) : 모든 리액트 컴포넌트에는 라이프사이클 존재, 컴포넌트 수명은 페이지에 렌더링 되기 전인 준비 과정에서 시작해 페이지에서 사라질 때 끝남, 클래스형 컴포넌트에서만 사용 가능(함수형에서는 Hooks 기능 사용)
+  - 메소드 9종류(Will 접두사 붙은 메소드 : 어떤 작업 작동하기 전 실행, Did 접두사 붙은 메소드 : 어떤 작업 작동 후 실행) & 3가지 카테고리(마운트, 업데이트, 언마운트)로 나뉨
+  - 카테고리
+    1. 마운트 : DOM이 생성되고 웹 브라우저상에 나타나는 것
+      - constructor : 컴포넌트 새로 만들 때마다 호출되는 클래스 생성자 메소드
+      - getDerivedStateFromProps : props에 있는 값을 state에 넣을 때 사용하는 메소드
+      - render : 우리가 준비한 UI를 렌더링하는 메소드
+      - componentDidMount : 컴포넌트가 웹 브라우저상에 나타난 후 호출하는 메소드
+    2. 업데이트 : 컴포넌트는 총 4가지 경우에 업데이트 함
+      - 업데이트 하는 경우
+        1) props가 바뀔 때
+        2) state가 바뀔 때
+        3) 부모 컴포넌트가 리렌더링 될 때
+        4) this.forceUpdate로 강제 렌더링 트리거할 때 
+      - forceUpdate : 컴포넌트 업데이트 할 때 호출하는 메소드 
+      - getDerivedStateFromProps : 이 메소드는 마운트 과정에서도 호출되며, 업데이트 시작하기 전에도 호출, props 변화에 따라 state값에도 변화를 주고싶을 때 사용
+      - shouldComponentUpdate : 컴포넌트가 리렌더링 해야할지 말아야할지를 결정하는 메소드, true나 false 반환, true반환 시 다음 라이프사이클 메소드 계속 실해으 false 반환 시 작업 중지(컴포넌트 리렌더링 x), this.forceUpdate() 함수 호출 시 이 과정 생략하고 바로 render 호출
+      - render : 컴포넌트 리렌더링
+      - getSnapshotBeforeUpdate : 컴포넌트 변화를 DOM에 반영하기 바로 직전에 호출하는 메소드
+      - componentDidUpdate : 컴포넌트의 업데이트 작업 끝난 후 호출하는 메소드
+    3. 언마운트 : 마운트의 반대 과정, 즉 컴포넌트를 DOM에서 제거하는 것
+      - componentWillUnmount : 컴포넌트가 웹 브라우저상에서 사라지기 전에 호출하는 메소드
+  - 메소드 : 컴포넌트 상태에 변화 있을 때마다 실행, 서드파티 라이브러리 사용하거나 DOM 직접 건드려야 하는 상황에서 유용
+    1. render() 함수 : render() {...} 
+      라이프사이클 메소드 중 유일한 필수 메소드, 컴포넌트 모양새 정의, 이 메소드 안에서 this.props와 this.state에 접근할 수 있으며 리액트 요소 반환
+      이 메소드 안에서 이벤트 설정이 아닌 곳에서 setState 사용하거나 브라우저의 DOM에 접근하면 안됨 => componentDidMount에서 처리
+    2. constructor 메소드 : constructor(props) {...}
+      컴포넌트의 생성자 메소드로 컴포넌트를 만들 때 처음으로 실햄, 이 메소드에서 초기 state 정할 수 있음
+    3. getDerivedStateFromProps 메소드 : 리액트 v16.3 이후 만든 메소드
+        static getDerivedStateFromProps(nextProps, prevState) {
+            if (nextProps.value !== prevState.value) { // 조건에 따라 특정 값 동기화
+                return {value : nextProps.value}
+            }
+            return null // state 변경할 필요 없다면 null 반환
+        }
+      props로 받아 온 값을 state에 동기화 시키는 용도로 사용, 컴포넌트가 마운트 될 때와 업데이트 될 때 호출
+    4. componentDidMount 메소드 : componentDidMount() {...}
+      컴포넌트 만들고 첫 렌더링 다 마친 후 실행, 이 안에서 다른 JS 라이브러리 또는 프레임워크의 함수를 호출하거나 이벤트 등록, setTimeout, setInterval, 네트워크 요청 같은 비동기 작업 처리
+    5. shouldComponentUpdate 메소드 : shouldComponentUpdate(nextProps, nextState) {...}
+      props 또는 state를 변경했을 때 리렌더링을 시작할지 여부 지정하는 메소드, 이 메소드 안에서 현재 props와 state는 this.props와 this.state로 접근하고 새로 설정 될 것은 nextProps와 nextState로 접근
+      프로젝트 성능 최적화 시 상황에 맞는 알고리즘 작성해 리렌더링 방지할 땐 false 값 반환하게 함
+    6. getSnapshopBeforeUpdate 메소드 : 리액트 v16.3 이후 만든 메소드
+        getSnapshotBeforeUpdate(prevProps, prevState) {
+            if(prevState.array !== this.state.array) {
+                const {scrollTop, scrollHeight} = this.list
+                  return {scrollTop, scrollHeight}
+            }
+        }
+      render에서 만들어진 결과물이 브라우저에 실제로 반영되기 직전 호출, 이 메소드에서 반환하는 값은 componentDidUpdate에서 세 번째 파라미터인 snapshot 값으로 전달받을 수 있음
+      주로 업데이트하기 직전의 값을 참고할 일이 있을 때 활용됨(ex. 스크롤바 위치 유지) 
+    7. componentDidUpdate 메소드 : componentDidUpdate(prevProps, prevState, snapshot) {...}
+      리렌더링 완료한 후 실행, 업데이트 끝난 직후이므로 DOM 관련 처리 가능, prevProps 또는 prevState 사용해 컴포넌트가 이전에 가졌던 데이터에 접근 가능
+      getSnapshopBeforeUpdate에서 반환한 값 있으면 snapshot 값 전달받을 수 있음
+    8. componentWillUnmount 메소드 : componentWillUnmount() {...}
+      컴포넌트를 DOM에서 제거할 때 실행, componentDidMount에서 등록한 이벤트, 타이머, 직접 생성한 DOM이 있을경우 여기서 제거 작업 해야됨
+    9. componentDidCatch 메소드 : 리액트 v16에서 새로 도입
+      componentDidCatch(error, info) { // error : 어떤 에러가 발생했는지 알려줌, info : 어디에 있는 코드에서 오류 발생했는지에 대한 정보 줌
+        this.setState({
+            error : true
+        })
+        console.log({error, info})
+      }
+      컴포넌트 렌더링 도중 에러 발생했을 때 애플리케이션이 먹통 되지 않고 오류 UI 보여줄 수 있게 해줌
+      컴포넌트 자신에게 방생하는 에러 잡아낼 수 없고 자신의 this.props.children으로 전달되는 컴포넌트에서 발생하는 에러만 잡아낼 수 있음
+
+
+
+
+
 
 */
